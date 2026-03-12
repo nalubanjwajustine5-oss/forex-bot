@@ -24,11 +24,13 @@ def send_email(message):
 
 def get_price():
     url = "https://api.exchangerate.host/latest?base=GBP&symbols=USD"
-    data = requests.get(url).json()
+    response = requests.get(url)
+    data = response.json()
+
     price = data.get("rates", {}).get("USD")
 
     if price is None:
-        return 0
+        return None
 
     return float(price)
 
@@ -36,7 +38,7 @@ def get_price():
 while True:
     price = get_price()
 
-    if price == 0:
+    if price is None:
         print("Price error, retrying...")
         time.sleep(60)
         continue
@@ -49,8 +51,6 @@ while True:
 
     else:
         signal = "NO TRADE"
-
-    global last_signal
 
     if signal != last_signal:
 
